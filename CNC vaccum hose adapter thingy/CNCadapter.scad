@@ -32,13 +32,20 @@ module outerAdapter(){
 	}
 }
 
+module cubeNub(){
+	cube([20,wNub(),hNub()]);
+}
+
 module theAdapter(){
 	difference(){
-			outerAdapter();
-			translate([0,0,-0.1]){
-				innerAdapter();
-			}
-	};
+		outerAdapter();
+		translate([0,0,-0.1]){
+			innerAdapter();
+		}
+		translate([rCNC()-10,-wNub()/2,(hVac()+hCNC()+50-hNub())]){
+			cubeNub();
+		}
+	}
 }
 
 theAdapter();
