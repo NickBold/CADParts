@@ -169,6 +169,14 @@ module leftFoot(){
 	}
 }
 
+module frontCut(w=frontWidth(),d=woodThickness()+0.2,h=0.1){
+	cube([w,d,h]);
+}
+
+module leftCut(){
+	
+}
+
 module topSide(w=topWidth(),d=topDepth(),h=topHeight()){
 	//This translate/rotate is for laying out the pieces to create a .dxf file.
 	translate([0,0,0]){
@@ -245,40 +253,56 @@ module topSide(w=topWidth(),d=topDepth(),h=topHeight()){
 }
 
 module frontSide(w=frontWidth(),d=frontDepth(),h=frontHeight(),top=true){
-	union(){
+	union(){frontCut();
 		difference(){
 			cube([w,d,h]);
 			//These three tabSlots connect with the bottom.
-			translate([(1/4*w)-(1/2*tabWidth()),2*woodThickness(),-0.1]){
+			translate([(1/5*w)-(1/2*tabWidth()),2*woodThickness(),-0.1]){
 				rotate([90,0,0]){
 					tabSlot();
 				}
 			}
-			translate([(2/4*w)-(1/2*tabWidth()),2*woodThickness(),-0.1]){
+			translate([(2/5*w)-(1/2*tabWidth()),2*woodThickness(),-0.1]){
 				rotate([90,0,0]){
 					tabSlot();
 				}
 			}
-			translate([(3/4*w)-(1/2*tabWidth()),2*woodThickness(),-0.1]){
+			translate([(3/5*w)-(1/2*tabWidth()),2*woodThickness(),-0.1]){
 				rotate([90,0,0]){
 					tabSlot();
 				}
 			}
-			//These three tabSlots connect with the top.
+			translate([(4/5*w)-(1/2*tabWidth()),2*woodThickness(),-0.1]){
+				rotate([90,0,0]){
+					tabSlot();
+				}
+			}
+			//These four tabSlots connect with the top.
 			if(top==true){
-				translate([(1/4*w)-(1/2*tabWidth()),2*woodThickness(),h-woodThickness()]){
+				translate([(1/5*w)-(1/2*tabWidth()),2*woodThickness(),h-woodThickness()]){
 					rotate([90,0,0]){
 						tabSlot();
 					}
 				}
-				translate([(2/4*w)-(1/2*tabWidth()),2*woodThickness(),h-woodThickness()]){
+				translate([(2/5*w)-(1/2*tabWidth()),2*woodThickness(),h-woodThickness()]){
 					rotate([90,0,0]){
 						tabSlot();
 					}
 				}
-				translate([(3/4*w)-(1/2*tabWidth()),2*woodThickness(),h-woodThickness()]){
+				translate([(3/5*w)-(1/2*tabWidth()),2*woodThickness(),h-woodThickness()]){
 					rotate([90,0,0]){
 						tabSlot();
+					}
+				}
+				translate([(4/5*w)-(1/2*tabWidth()),2*woodThickness(),h-woodThickness()]){
+					rotate([90,0,0]){
+						tabSlot();
+					}
+				}
+				//Front cut
+				translate([0,0,1/3*frontHeight()]){
+					rotate([0,0,0]){
+						frontCut();
 					}
 				}
 			}
@@ -334,33 +358,43 @@ module bottomSide(w=bottomWidth(),d=bottomDepth(),h=bottomHeight()){
 		//There are 12 tabs, 3 per side times 4 sides.  
 		//It is all symetrical, thus I know there is more elegant code to do this, but I don't yet know it.
 		//Top side tabs
-		translate([(1/4*w)-(1/2*tabWidth()),0,h]){
+		translate([(1/5*w)-(1/2*tabWidth()),0,h]){
 			rotate([0,0,0]){
 				tab();
 			}
 		}
-		translate([(2/4*w)-(1/2*tabWidth()),0,h]){
+		translate([(2/5*w)-(1/2*tabWidth()),0,h]){
 			rotate([0,0,0]){
 				tab();
 			}
 		}
-		translate([(3/4*w)-(1/2*tabWidth()),0,h]){
+		translate([(3/5*w)-(1/2*tabWidth()),0,h]){
+			rotate([0,0,0]){
+				tab();
+			}
+		}
+		translate([(4/5*w)-(1/2*tabWidth()),0,h]){
 			rotate([0,0,0]){
 				tab();
 			}
 		}
 		//Bottom side tabs
-		translate([(1/4*w)-(1/2*tabWidth()),woodThickness(),0]){
+		translate([(1/5*w)-(1/2*tabWidth()),woodThickness(),0]){
 			rotate([180,0,0]){
 				tab();
 			}
 		}
-		translate([(2/4*w)-(1/2*tabWidth()),woodThickness(),0]){
+		translate([(2/5*w)-(1/2*tabWidth()),woodThickness(),0]){
 			rotate([180,0,0]){
 				tab();
 			}
 		}
-		translate([(3/4*w)-(1/2*tabWidth()),woodThickness(),0]){
+		translate([(3/5*w)-(1/2*tabWidth()),woodThickness(),0]){
+			rotate([180,0,0]){
+				tab();
+			}
+		}
+		translate([(4/5*w)-(1/2*tabWidth()),woodThickness(),0]){
 			rotate([180,0,0]){
 				tab();
 			}
@@ -498,39 +532,54 @@ module leftSide(w=leftWidth(),d=leftDepth(),h=leftHeight()){
 	}
 }
 
-//Translate dimensions are arbitrary, trying to get a good packing factor for creation of a .dxf file.
-translate([0,(4/3*topHeight()),0]){
-	rotate([90,0,0]){
-		topSide();
+module box(){
+	//Translate dimensions are arbitrary, trying to get a good packing factor for creation of a .dxf file.
+	translate([0,(4/3*topHeight()),0]){
+		rotate([90,0,0]){
+			topSide();
+		}
 	}
-}
-translate([0,0,0]){
-	rotate([90,0,0]){
-		frontSide(top=true);
-	}
+//	translate([0,0,0]){
+//		rotate([90,0,0]){
+//			frontSide(top=true);
+//		}
+//	}
+//	
+//	translate([7/6*frontWidth(),0,0]){
+//		rotate([90,0,0]){
+//			frontSide(top=false);
+//		}
+//	}
+//	
+//	translate([7/6*frontWidth(),(4/3*topHeight()),0]){
+//		rotate([90,0,0]){
+//			bottomSide();
+//		}
+//	}
+//	
+//	translate([7/3*frontWidth(),0,0]){
+//		rotate([90,0,0]){
+//			leftSide();
+//		}
+//	}
+//	
+//	//Left and Right are identical, this is the right side.
+//	translate([7/3*frontWidth(),(4/3*topHeight()),0]){
+//		rotate([90,0,0]){
+//			leftSide();
+//		}
+//	}
+//	
+//	//34 pins
+//	for (i = [1:34]){
+//	    translate([i*(4/3*pinWidth()),3/2*frontHeight()+woodThickness(),0]){
+//	    	rotate([90,0,0]){
+//	    		pin();
+//	    	}
+//	    }
+//	}
 }
 
-translate([7/6*frontWidth(),0,0]){
-	rotate([90,0,0]){
-		frontSide(top=false);
-	}
-}
-
-translate([7/6*frontWidth(),(4/3*topHeight()),0]){
-	rotate([90,0,0]){
-		bottomSide();
-	}
-}
-
-translate([7/3*frontWidth(),0,0]){
-	rotate([90,0,0]){
-		leftSide();
-	}
-}
-
-//Left and Right are identical, this is the right side.
-translate([7/3*frontWidth(),(4/3*topHeight()),0]){
-	rotate([90,0,0]){
-		#leftSide();
-	}
+projection(cut=false){
+	box();
 }
