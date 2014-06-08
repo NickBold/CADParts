@@ -119,7 +119,7 @@ module tabSlot(w=tabWidth(),d=tabDepth(),h=tabHeight()){
 
 //The wideTab adds to the side dimensions in ceratin places to add enough lip to create slots for tabs.
 //Default w (width) is 1, you'll want to set the width each time you call the wideTab
-module wideTab(w=1,d=woodThickness(),h=woodThickness()){
+module wideTab(w=1,d=woodThickness(),h=woodThickness(),rfillet=true){
 	difference(){
 		cube([w,d,h]);
 		translate([0,0,h]){
@@ -127,10 +127,22 @@ module wideTab(w=1,d=woodThickness(),h=woodThickness()){
 				fillet();
 			}
 		}
-		translate([w,d,h]){
-			rotate([-90,0,180]){
-				fillet();		
+		if(rfillet==true){
+			translate([w,d,h]){
+				rotate([-90,0,180]){
+					fillet();	
+				}	
 			}
+		}
+	}
+}
+
+//Hinge hole punch
+module hinge(h=woodThickness(),d=tabWidth()+2*woodThickness(),center=false){
+	difference(){
+		cylinder(h=h+0.2,r=(d/2));
+		translate([0,0,-0.1]){
+			cylinder(h=h+0.4,r=(d/2)-0.1);
 		}
 	}
 }
@@ -149,9 +161,9 @@ module frontFoot(){
 module leftFoot(){
 	difference(){
 		cube([leftWidth(),leftDepth(),footHeight()]);
-		translate([(1/2*frontWidth()),-0.1,-frontWidth()+(1/2*woodThickness())+(2/3*footHeight())]){
+		translate([(1/2*leftWidth()),-0.1,-leftWidth()+(1/2*woodThickness())+(1/2*footHeight())]){
 			rotate([-90,0,0]){
-				cylinder(h=frontDepth()+0.2,r=frontWidth(),center=false);
+				cylinder(h=leftDepth()+0.2,r=leftWidth(),center=false);
 			}
 		}
 	}
@@ -389,10 +401,99 @@ module bottomSide(w=bottomWidth(),d=bottomDepth(),h=bottomHeight()){
 }
 
 module leftSide(w=leftWidth(),d=leftDepth(),h=leftHeight()){
-	union(){
-		difference(){
-			cube([w,d,h]);
-			
+	difference(){
+		union(){
+			difference(){
+				cube([w,d,h]);
+				//Top tabSlots
+				translate([(1/4*w)-(1/2*tabWidth()),2*woodThickness(),h-woodThickness()]){
+					rotate([90,0,0]){
+						tabSlot();
+					}
+				}
+				translate([(2/4*w)-(1/2*tabWidth()),2*woodThickness(),h-woodThickness()]){
+					rotate([90,0,0]){
+						tabSlot();
+					}
+				}
+				translate([(3/4*w)-(1/2*tabWidth()),2*woodThickness(),h-woodThickness()]){
+					rotate([90,0,0]){
+						tabSlot();
+					}
+				}
+				//Front tabSlots
+				translate([w-woodThickness(),2*woodThickness(),(1/4*w)+(1/2*tabWidth())]){
+					rotate([90,90,0]){
+						tabSlot();
+					}
+				}
+				translate([w-woodThickness(),2*woodThickness(),(2/4*w)+(1/2*tabWidth())]){
+					rotate([90,90,0]){
+						tabSlot();
+					}
+				}
+				translate([w-woodThickness(),2*woodThickness(),(3/4*w)+(1/2*tabWidth())]){
+					rotate([90,90,0]){
+						tabSlot();
+					}
+				}
+				//Back tabSlots
+				translate([0,2*woodThickness(),(1/4*w)+(1/2*tabWidth())]){
+					rotate([90,90,0]){
+						tabSlot();
+					}
+				}
+				translate([0,2*woodThickness(),(2/4*w)+(1/2*tabWidth())]){
+					rotate([90,90,0]){
+						tabSlot();
+					}
+				}
+				translate([0,2*woodThickness(),(3/4*w)+(1/2*tabWidth())]){
+					rotate([90,90,0]){
+						tabSlot();
+					}
+				}
+				//Hinge tabSlot
+				translate([woodThickness(),2*woodThickness(),h-woodThickness()]){
+					rotate([90,0,0]){
+						tabSlot();
+					}
+				}
+			}
+			//Hinge tab
+			translate([-woodThickness(),0,h]){
+				rotate([0,0,0]){
+					wideTab(w=tabWidth()+4*woodThickness(),h=tabHeight()+woodThickness());
+				}
+			}
+			//Top tab, will lock with topSide.
+			translate([(w/2)-(3/8*w),0,h]){
+				rotate([0,0,0]){
+					wideTab(w=3/4*w);
+				}
+			}
+			//Front and back tabs, will lock with front and backSides.
+			translate([0,0,(h/2)-(3/8*h)]){
+				rotate([0,-90,0]){
+					wideTab(w=7/8*h,rfillet=false);
+				}
+			}
+			translate([w,0,(h/2)+(3/8*h)]){
+				rotate([0,90,0]){
+					wideTab(w=3/4*h);
+				}
+			}
+			translate([0,0,-footHeight()]){
+				rotate([0,0,0]){
+					leftFoot();
+				}
+			}
+		}
+		//Hinge hole punch.
+		translate([tabWidth()/2+woodThickness(),woodThickness()+0.1,h-woodThickness()/2]){
+			rotate([90,0,0]){
+				hinge();
+			}
 		}
 	}
 }
@@ -421,8 +522,15 @@ translate([7/6*frontWidth(),(4/3*topHeight()),0]){
 	}
 }
 
-translate([90,0,0]){
-	rotate([0,0,0]){
-//		leftSide();
+translate([7/3*frontWidth(),0,0]){
+	rotate([90,0,0]){
+		leftSide();
+	}
+}
+
+//Left and Right are identical, this is the right side.
+translate([7/3*frontWidth(),(4/3*topHeight()),0]){
+	rotate([90,0,0]){
+		#leftSide();
 	}
 }
