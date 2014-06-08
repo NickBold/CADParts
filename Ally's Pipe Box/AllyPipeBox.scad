@@ -33,8 +33,8 @@ function frontHeight() = boxHeight() + woodThickness();
 
 //bottomSide
 function bottomWidth() = boxWidth();
-function bottomDepth() = boxDepth();
-function bottomHeight() = woodThickness();
+function bottomDepth() = woodThickness();
+function bottomHeight() = boxDepth();
 
 //leftSide 
 //Left and right sides are identical, simply make two leftSides.
@@ -316,75 +316,84 @@ module frontSide(w=frontWidth(),d=frontDepth(),h=frontHeight(),top=true){
 	}
 }
 
-module leftSide(w=leftWidth(),d=leftDepth(),h=leftHeight()){
+module bottomSide(w=bottomWidth(),d=bottomDepth(),h=bottomHeight()){
 	union(){
 		cube([w,d,h]);
 		//There are 12 tabs, 3 per side times 4 sides.  
 		//It is all symetrical, thus I know there is more elegant code to do this, but I don't yet know it.
-				//Left side tabs
-				translate([0,0,(1/4*h)-(1/2*tabWidth())]){
-					rotate([0,-90,0]){
-						tab();
-					}
-				}
-				translate([0,0,(2/4*h)-(1/2*tabWidth())]){
-					rotate([0,-90,0]){
-						tab();
-					}
-				}
-				translate([0,0,(3/4*h)-(1/2*tabWidth())]){
-					rotate([0,-90,0]){
-						tab();
-					}
-				}
-				//Right side tabs
-				translate([w,0,(1/4*h)+(1/2*tabWidth())]){
-					rotate([0,90,0]){
-						tab();
-					}
-				}
-				translate([w,0,(2/4*h)+(1/2*tabWidth())]){
-					rotate([0,90,0]){
-						tab();
-					}
-				}
-				translate([w,0,(3/4*h)+(1/2*tabWidth())]){
-					rotate([0,90,0]){
-						tab();
-					}
-				}
-				//Top tabs
-				translate([(1/4*h)+(1/2*tabWidth()),0,0]){
-					rotate([0,180,0]){
-						tab();
-					}
-				}
-				translate([(2/4*h)+(1/2*tabWidth()),0,0]){
-					rotate([0,180,0]){
-						tab();
-					}
-				}
-				translate([(3/4*h)+(1/2*tabWidth()),0,0]){
-					rotate([0,180,0]){
-						tab();
-					}
-				}
-				//Bottom tabs
-				translate([(1/4*h)-(1/2*tabWidth()),0,h]){
-					rotate([0,0,0]){
-						tab();
-					}
-				}
-				translate([(2/4*h)-(1/2*tabWidth()),0,h]){
-					rotate([0,0,0]){
-						tab();
-					}
-				}
-				translate([(3/4*h)-(1/2*tabWidth()),0,h]){
-					rotate([0,0,0]){
-						tab();
-					}
-				}
+		//Top side tabs
+		translate([(1/4*w)-(1/2*tabWidth()),0,h]){
+			rotate([0,0,0]){
+				tab();
+			}
+		}
+		translate([(2/4*w)-(1/2*tabWidth()),0,h]){
+			rotate([0,0,0]){
+				tab();
+			}
+		}
+		translate([(3/4*w)-(1/2*tabWidth()),0,h]){
+			rotate([0,0,0]){
+				tab();
+			}
+		}
+		//Bottom side tabs
+		translate([(1/4*w)-(1/2*tabWidth()),woodThickness(),0]){
+			rotate([180,0,0]){
+				tab();
+			}
+		}
+		translate([(2/4*w)-(1/2*tabWidth()),woodThickness(),0]){
+			rotate([180,0,0]){
+				tab();
+			}
+		}
+		translate([(3/4*w)-(1/2*tabWidth()),woodThickness(),0]){
+			rotate([180,0,0]){
+				tab();
+			}
+		}
+		//Left tabs
+		translate([0,0,(1/4*h)-(1/2*tabWidth())]){
+			rotate([0,-90,0]){
+				tab();
+			}
+		}
+		translate([0,0,(2/4*h)-(1/2*tabWidth())]){
+			rotate([0,-90,0]){
+				tab();
+			}
+		}
+		translate([0,0,(3/4*h)-(1/2*tabWidth())]){
+			rotate([0,-90,0]){
+				tab();
+			}
+		}
+		//Bottom tabs
+		translate([w,0,(1/4*h)+(1/2*tabWidth())]){
+			rotate([0,90,0]){
+				tab();
+			}
+		}
+		translate([w,0,(2/4*h)+(1/2*tabWidth())]){
+			rotate([0,90,0]){
+				tab();
+			}
+		}
+		translate([w,0,(3/4*h)+(1/2*tabWidth())]){
+			rotate([0,90,0]){
+				tab();
+			}
+		}
+	}
+}
+
+module leftSide(w=leftWidth(),d=leftDepth(),h=leftHeight()){
+	union(){
+		difference(){
+			cube([w,d,h]);
+			
+		}
 	}
 }
 
@@ -408,12 +417,12 @@ translate([7/6*frontWidth(),0,0]){
 
 translate([7/6*frontWidth(),(4/3*topHeight()),0]){
 	rotate([90,0,0]){
-		leftSide();
+		bottomSide();
 	}
 }
 
-//translate([0,0,0]){
-//	rotate([0,0,0]){
+translate([90,0,0]){
+	rotate([0,0,0]){
 //		leftSide();
-//	}
-//}
+	}
+}
