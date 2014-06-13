@@ -90,9 +90,12 @@ module pin(w=pinWidth(),d=pinDepth(),h=pinHeight()){
 	}
 }
 
-module tab(w=tabWidth(),d=tabDepth(),h=tabHeight()){
+//To compile to projection, made tabs 0.1 taller, and offset them by the same.
+module tab(w=tabWidth(),d=tabDepth(),h=(tabHeight())){
 	difference(){
-		cube([w,d,h]);
+		translate([0,0,-0.1]){
+			cube([w,d,(h+0.1)]);
+		}
 		translate([0,0,h]){
 			rotate([-90,0,0]){
 				fillet();
@@ -115,13 +118,13 @@ module tab(w=tabWidth(),d=tabDepth(),h=tabHeight()){
 //It also has no pin hole, making it better for the subtractions.
 module tabSlot(w=tabWidth(),d=tabDepth(),h=tabHeight()){
 	cube([(w+0.1),(d+0.1),(h+0.1)]);
-}
+}	
 
 //The wideTab adds to the side dimensions in ceratin places to add enough lip to create slots for tabs.
 //Default w (width) is 1, you'll want to set the width each time you call the wideTab
 module wideTab(w=1,d=woodThickness(),h=woodThickness(),rfillet=true){
 	difference(){
-		cube([w,d,h]);
+		translate([0,0,-0.1])cube([w,d,h+0.1]);
 		translate([0,0,h]){
 			rotate([-90,0,0]){
 				fillet();
@@ -149,7 +152,9 @@ module hinge(h=woodThickness(),d=tabWidth()+2*woodThickness(),center=false){
 
 module frontFoot(){
 	difference(){
-		cube([frontWidth(),frontDepth(),footHeight()]);
+		translate([0,0,0.1]){
+			cube([frontWidth(),frontDepth(),footHeight()+0.1]);
+		}
 		translate([(1/2*frontWidth()),-0.1,-frontWidth()+(1/2*woodThickness())+(2/3*footHeight())]){
 			rotate([-90,0,0]){
 				cylinder(h=frontDepth()+0.2,r=frontWidth(),center=false);
@@ -160,7 +165,9 @@ module frontFoot(){
 
 module leftFoot(){
 	difference(){
-		cube([leftWidth(),leftDepth(),footHeight()]);
+		translate([0,0,-0.1]){
+			cube([leftWidth(),leftDepth(),footHeight()+0.1]);
+		}
 		translate([(1/2*leftWidth()),-0.1,-leftWidth()+(1/2*woodThickness())+(1/2*footHeight())]){
 			rotate([-90,0,0]){
 				cylinder(h=leftDepth()+0.2,r=leftWidth(),center=false);
@@ -169,12 +176,28 @@ module leftFoot(){
 	}
 }
 
-module frontCut(w=frontWidth(),d=woodThickness()+0.2,h=0.1){
+module frontCut(w=frontWidth()+0.2,d=(woodThickness()+0.2),h=0.1){
 	cube([w,d,h]);
 }
 
 module leftCut(){
-	
+	union(){
+		translate([-0.1,0,0]){
+			rotate([0,0,0]){
+				cube([leftWidth(),(woodThickness()+0.2),0.1]);
+			}
+		}
+		translate([0,0,0]){
+			rotate([0,atan2((1/2*leftHeight()),(leftWidth()-(16*woodThickness())))-180,0]){
+				cube([(sqrt(((leftWidth()-(16*woodThickness()))*(leftWidth()-(16*woodThickness())))+((1/2*leftHeight())*(1/2*leftHeight())))),(woodThickness()+0.2),0.1]);
+			}
+		}
+		translate([-(leftWidth()-(16*woodThickness())),0,(1/2*leftHeight())-0.1]){
+			rotate([0,-90,0]){
+				cube([leftHeight(),(woodThickness()+0.2),0.1]);
+			}
+		}
+	}
 }
 
 module topSide(w=topWidth(),d=topDepth(),h=topHeight()){
@@ -205,7 +228,7 @@ module topSide(w=topWidth(),d=topDepth(),h=topHeight()){
 						tab();
 					}
 				}
-				translate([0,0,(3/4*h)-(1/2*tabWidth())]){
+				translate([0,0,(3/4*h)-(1/2*tabWidth())-woodThickness()]){
 					rotate([0,-90,0]){
 						tab();
 					}
@@ -221,7 +244,7 @@ module topSide(w=topWidth(),d=topDepth(),h=topHeight()){
 						tab();
 					}
 				}
-				translate([w,0,(3/4*h)+(1/2*tabWidth())]){
+				translate([w,0,(3/4*h)+(1/2*tabWidth())-woodThickness()]){
 					rotate([0,90,0]){
 						tab();
 					}
@@ -253,7 +276,7 @@ module topSide(w=topWidth(),d=topDepth(),h=topHeight()){
 }
 
 module frontSide(w=frontWidth(),d=frontDepth(),h=frontHeight(),top=true){
-	union(){frontCut();
+	union(){
 		difference(){
 			cube([w,d,h]);
 			//These three tabSlots connect with the bottom.
@@ -300,7 +323,7 @@ module frontSide(w=frontWidth(),d=frontDepth(),h=frontHeight(),top=true){
 					}
 				}
 				//Front cut
-				translate([0,0,1/3*frontHeight()]){
+				translate([-0.1,-0.1,3/8*h]){
 					rotate([0,0,0]){
 						frontCut();
 					}
@@ -440,7 +463,7 @@ module leftSide(w=leftWidth(),d=leftDepth(),h=leftHeight()){
 			difference(){
 				cube([w,d,h]);
 				//Top tabSlots
-				translate([(1/4*w)-(1/2*tabWidth()),2*woodThickness(),h-woodThickness()]){
+				translate([(1/4*w)-(1/2*tabWidth())+woodThickness(),2*woodThickness(),h-woodThickness()]){
 					rotate([90,0,0]){
 						tabSlot();
 					}
@@ -529,47 +552,47 @@ module leftSide(w=leftWidth(),d=leftDepth(),h=leftHeight()){
 				hinge();
 			}
 		}
-	}
-}
-
-module box(){
-	//Translate dimensions are arbitrary, trying to get a good packing factor for creation of a .dxf file.
-	translate([0,(4/3*topHeight()),0]){
-		rotate([90,0,0]){
-			topSide();
+		//Left cut
+		translate([w-8*woodThickness(),-0.1,3/8*h]){
+			rotate([0,0,0]){
+				leftCut();
+			}
 		}
 	}
+}
+projection(cut=false){
+//	//Translate dimensions are arbitrary, trying to get a good packing factor for creation of a .dxf file.
+//	translate([0,(4/3*topHeight()),0]){
+//		rotate([90,0,0]){
+//			topSide();
+//		}
+//	}
 //	translate([0,0,0]){
 //		rotate([90,0,0]){
 //			frontSide(top=true);
 //		}
 //	}
-//	
 //	translate([7/6*frontWidth(),0,0]){
 //		rotate([90,0,0]){
 //			frontSide(top=false);
 //		}
 //	}
-//	
 //	translate([7/6*frontWidth(),(4/3*topHeight()),0]){
 //		rotate([90,0,0]){
 //			bottomSide();
 //		}
 //	}
-//	
 //	translate([7/3*frontWidth(),0,0]){
 //		rotate([90,0,0]){
 //			leftSide();
 //		}
 //	}
-//	
 //	//Left and Right are identical, this is the right side.
 //	translate([7/3*frontWidth(),(4/3*topHeight()),0]){
 //		rotate([90,0,0]){
 //			leftSide();
 //		}
 //	}
-//	
 //	//34 pins
 //	for (i = [1:34]){
 //	    translate([i*(4/3*pinWidth()),3/2*frontHeight()+woodThickness(),0]){
@@ -578,8 +601,4 @@ module box(){
 //	    	}
 //	    }
 //	}
-}
-
-projection(cut=false){
-	box();
-}
+//}	
